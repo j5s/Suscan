@@ -65,6 +65,7 @@ func main() {
 	}
 
 	routers.InitRouter()
+
 	//调用 ListenAndServe 将实际“启动”服务
 	err := server.ListenAndServe()
 	if err != nil {
