@@ -1,0 +1,11 @@
+package e
+
+const (
+	SUCCESS          = 200
+	ERROR            = 500
+	INVALID_PARAMS   = 400
+	INVALID_PASS     = 402
+	INVALID_FINGER   = 405
+	INVALID_DIFFPASS = 403
+	ERROR_CRON_SPEC  = 10001
+)
