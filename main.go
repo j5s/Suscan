@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+
 func init() {
 	err := setupSetting()
 	if err != nil {
@@ -22,7 +23,6 @@ func init() {
 
 func setupSetting() error {
 	s, err := setting.NewSetting(strings.Split("configs/", ",")...)
-
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,6 @@ func setupSetting() error {
 	return nil
 }
 
-
 func main() {
 	//实现 Golang HTTP/HTTPS 服务重新启动的零停机
 	endless.DefaultReadTimeOut = global.ServerSetting.ReadTimeout
@@ -63,13 +62,9 @@ func main() {
 	server.BeforeBegin = func(add string) {
 		log.Printf("Actual pid is %d", syscall.Getpid())
 	}
-
-	routers.InitRouter()
-
 	//调用 ListenAndServe 将实际“启动”服务
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Printf("Server err: %v", err)
 	}
-
 }

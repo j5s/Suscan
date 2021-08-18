@@ -15,6 +15,7 @@ func InitRouter() *gin.Engine {
 	apiv1 := r.Group("/api/v1")
 
 	//http://localhost:18000/api/v1/scan
+	//端口扫描 Nmap
 	apiv1.GET("/scan", v1.ScanPort)
 
 	return r
