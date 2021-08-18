@@ -12,7 +12,6 @@ type Log struct {
 }
 
 
-
 func AddLog(data map[string]interface{})int {
 	log := Log{
 		TaskName:    data["task_name"].(string),

@@ -23,7 +23,6 @@ func ExistIplist(ip, port string) (bool, int) {
 	if iplist.ID > 0 {
 		return true, iplist.ID
 	}
-
 	return false, iplist.ID
 }
 

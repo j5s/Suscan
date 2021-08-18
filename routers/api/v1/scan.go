@@ -7,13 +7,15 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 )
 
+var ips []string
+
 // 开始nmap端口扫描
 func ScanPort(c *gin.Context) {
-
 	code := e.SUCCESS
 	go InitNmapscan()
 	c.JSON(http.StatusOK, gin.H{
@@ -23,13 +25,22 @@ func ScanPort(c *gin.Context) {
 	})
 }
 
-
-
 func InitNmapscan() {
-
 	start := time.Now()
-	ips :=[]string{"baidu.com","qq.com","tuya.com","taobao.com","sohu.com"}
-	NmapStart(ips)
+
+	//数据库读取要扫描的资产
+	result := models.GetAllAsset()
+	for _,r := range result{
+		ipstmp := r.Target
+		ips = append(ips, ipstmp)
+	}
+
+	port := models.GetSettingPort("port")
+	fmt.Println("-----------")
+	fmt.Println(port)
+	fmt.Println("-----------")
+
+	NmapStart(ips,port)
 	costTime := time.Since(start)
 	data := make(map[string]interface{})
 	data["task_name"] = "PortScan"
@@ -37,15 +48,19 @@ func InitNmapscan() {
 	data["all_num"] = len(ips)
 	data["run_time"] = fmt.Sprintf("%s", costTime)
 	models.AddLog(data)
-
 }
 
-func NmapStart(ips []string)  {
+func NmapStart(ips []string, port string)  {
+	//数据库获取nmap个数的配置
+	cmd := models.GetSettingCmd("cmd")
+	//转为int
+	cmdInt, _ := strconv.Atoi(cmd)
+
 	//开启多个nmap协程
-	ch := make(chan int,1)
+	ch := make(chan int,cmdInt)
 	for _, ip := range ips {
 		ch <- 1
-		go NmapScan(ip,"1-65535",ch)
+		go NmapScan(ip,port,ch)
 	}
 }
 
@@ -104,7 +119,7 @@ func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
 			if target.State.State == "open" {
 				models.AddIplist(data)
 				wg.Done()
-				//fmt.Println(target.Ip, target.Port, "插入")
+			//fmt.Println(target.Ip, target.Port, "插入")
 			}else {
 				wg.Done()
 			}
