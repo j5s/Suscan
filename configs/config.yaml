@@ -12,7 +12,8 @@ Database:
   DBType: mysql
   UserName: root
   Password: woaini520
-  Host: 127.0.0.1:3306
+  Host: mysql
+  #  Host: 127.0.0.1:3306
   DBName: suscan
   TablePrefix:
   Charset: utf8
