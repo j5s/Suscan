@@ -63,7 +63,7 @@ func GetPortResult() (iplist []Iplist) {
 //返回自定义的高危协议
 func GetProResult() (iplist []Iplist) {
 	dbTmp := db
-	dbTmp.Where("protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ? OR protocol = ?", "mysql", "mssql", "redis", "memcache", "mongo", "ftp", "tftp", "ssh", "weblogic", "websphere", "tomcat", "ms-wbt-server", "oracle", "afs3-callback").Find(&iplist)
+	dbTmp.Where("service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ? OR service = ?", "mysql", "mssql", "redis", "memcache", "mongo", "ftp", "tftp", "ssh", "weblogic", "websphere", "tomcat", "ms-wbt-server", "oracle", "afs3-callback").Find(&iplist)
 	return
 }
 
