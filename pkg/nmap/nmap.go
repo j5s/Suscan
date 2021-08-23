@@ -32,9 +32,7 @@ type IdentifyResult struct {
 	Title string
 }
 
-//var res_type,res_code,res_result,res_url,res_title string
-
-func NmapScan(ip, port string) (nmapRes []NmapScanRes ) {
+func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes ) {
 
 	var (
 		resultBytes []byte
@@ -45,6 +43,7 @@ func NmapScan(ip, port string) (nmapRes []NmapScanRes ) {
 		nmap.WithTargets(ip),
 		nmap.WithPorts(port),
 		nmap.WithSkipHostDiscovery(), //  -Pn
+		nmap.WithTimingTemplate(nmap.Timing(t)),
 	)
 	if err != nil {
 		log.Fatalf("unable to create nmap scanner: %v", err)
@@ -80,9 +79,6 @@ func NmapScan(ip, port string) (nmapRes []NmapScanRes ) {
 	if err != nil {
 		panic(err)
 	}
-
-	//wg := sync.WaitGroup{}
-	//lock := &sync.Mutex{}
 
 	for _, host := range result.Hosts {
 		if len(host.Ports) == 0 || len(host.Addresses) == 0 {

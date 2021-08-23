@@ -4,7 +4,11 @@
 <a href="https://github.com/tangxiaofeng7/Suscan"><img alt="Release" src="https://img.shields.io/badge/LICENSE-GPL-important"></a>
 ![GitHub Repo stars](https://img.shields.io/github/stars/tangxiaofeng7/Suscan?color=success)
 ![GitHub forks](https://img.shields.io/github/forks/tangxiaofeng7/Suscan)  
+#  👻 Introduce
+一款综合扫描平台，方便一键自动化、全方位漏扫扫描。
 
+## 🏃🏼 Design
+![](images/index.png)
 
 ## 😊 Run
 安装docker与docker-compose
@@ -36,13 +40,14 @@ curl --location --request POST 'http://ip:18000/api/v1/assets' \
 curl --location --request POST 'http://ip:18000/api/v1/scansetting' \
 --form 'thread="5000"' \
 --form 'port="1-65535"' \
---form 'cmd="7"'
+--form 'cmd="7"' \
+--form 'timetemplate="4"'
 
 开启扫描：
 curl --location --request GET 'http://ip:18000/api/v1/scan'
 
-获取高危端口：
+获取扫描结果中的高危端口：
 curl --location --request GET 'http://ip:18000/api/v1/getVulPort'
 
-获取高危协议：
+获取扫描结果中的高危协议：
 curl --location --request GET 'http://ip:18000/api/v1/getVulPro'

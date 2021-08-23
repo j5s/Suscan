@@ -36,7 +36,10 @@ func InitNmapscan() {
 	}
 	//数据库读取要扫描的端口
 	port := models.GetSettingPort("port")
-	NmapStart(ips,port)
+	//数据库读取nmap -T 的值
+	t := models.GetSettingTiming("timetemplate")
+	t1, _ := strconv.Atoi(t)
+	NmapStart(ips,port,t1)
 	costTime := time.Since(start)
 	data := make(map[string]interface{})
 	data["task_name"] = "PortScan"
@@ -52,7 +55,7 @@ type NmapScanRes struct {
 	Protocol string
 }
 
-func NmapStart(ips []string, port string)  {
+func NmapStart(ips []string, port string,t int)  {
 	//数据库获取nmap个数的配置
 	cmd := models.GetSettingCmd("cmd")
 	//转为int
@@ -62,13 +65,13 @@ func NmapStart(ips []string, port string)  {
 	ch := make(chan int,cmdInt)
 	for _, ip := range ips {
 		ch <- 1
-		go NmapScan(ip,port,ch)
+		go NmapScan(ip,port,t,ch)
 	}
 }
 
-func NmapScan(ip,port string,ch chan int)  {
+func NmapScan(ip,port string,t int,ch chan int)  {
 
-	nmapRes := nmap.NmapScan(ip,port)
+	nmapRes := nmap.NmapScan(ip,port,t)
 	//fmt.Println(nmapRes)
 	// 并发处理扫描结果
 	wg := &sync.WaitGroup{}
@@ -126,7 +129,7 @@ func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
 			if target.State == "open" {
 				models.AddIplist(data)
 				wg.Done()
-			//fmt.Println(target.Ip, target.Port, "插入")
+			fmt.Println(target.Ip, target.Port, "插入")
 			}else {
 				wg.Done()
 			}

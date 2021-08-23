@@ -74,6 +74,7 @@ CREATE TABLE `setting`
     `thread`       varchar(255) DEFAULT NULL,
     `port`         varchar(255) DEFAULT NULL,
     `cmd`          varchar(255) DEFAULT NULL,
+    `timetemplate` int          DEFAULT NULL,
     `created_time` varchar(255) DEFAULT NULL,
     `updated_time` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`)
@@ -84,5 +85,5 @@ CREATE TABLE `setting`
 -- ----------------------------
 
 INSERT INTO `setting`
-VALUES (1, '2000', '80,443', '3', '20210819163924', '20210819164714');
+VALUES (1, '2000', '80,443', '3', 4, '20210819163924', '20210819164714');
 
