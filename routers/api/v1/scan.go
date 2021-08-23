@@ -14,7 +14,7 @@ import (
 
 var ips []string
 
-// 开始nmap端口扫描
+// 端口扫描api
 func ScanPort(c *gin.Context) {
 	code := e.SUCCESS
 	go InitNmapscan()
@@ -25,21 +25,17 @@ func ScanPort(c *gin.Context) {
 	})
 }
 
+//实现端口扫描
 func InitNmapscan() {
 	start := time.Now()
-
 	//数据库读取要扫描的资产
 	result := models.GetAllAsset()
 	for _,r := range result{
 		ipstmp := r.Target
 		ips = append(ips, ipstmp)
 	}
-
+	//数据库读取要扫描的端口
 	port := models.GetSettingPort("port")
-	fmt.Println("-----------")
-	fmt.Println(port)
-	fmt.Println("-----------")
-
 	NmapStart(ips,port)
 	costTime := time.Since(start)
 	data := make(map[string]interface{})
@@ -48,6 +44,12 @@ func InitNmapscan() {
 	data["all_num"] = len(ips)
 	data["run_time"] = fmt.Sprintf("%s", costTime)
 	models.AddLog(data)
+}
+
+type NmapScanRes struct {
+	Ip       string
+	Port     string
+	Protocol string
 }
 
 func NmapStart(ips []string, port string)  {
@@ -67,7 +69,7 @@ func NmapStart(ips []string, port string)  {
 func NmapScan(ip,port string,ch chan int)  {
 
 	nmapRes := nmap.NmapScan(ip,port)
-	fmt.Println(nmapRes)
+	//fmt.Println(nmapRes)
 	// 并发处理扫描结果
 	wg := &sync.WaitGroup{}
 
@@ -100,15 +102,20 @@ func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
 			}
 		}()
 
-		data["url"] = fmt.Sprintf("%s",target.Url)
-		data["ip"] = target.Ip.String()
+		data["url"] = target.Url
+		data["ip"] = target.Ip
 		data["port"] = target.Port
 		data["state"] = fmt.Sprintf("%s",target.State)
 		data["protocol"] = target.Protocol
 		data["service"] = fmt.Sprintf("%s",target.Service)
+		data["res_code"] = target.Res_code
+		data["res_result"] = target.Res_result
+		data["res_type"] = target.Res_type
+		data["res_url"] = target.Res_url
+		data["res_title"] = target.Res_title
 
 		//扫描结果入库前对比
-		ok, id := models.ExistIplist(target.Ip.String(), target.Port)
+		ok, id := models.ExistIplist(target.Ip, target.Port)
 		if ok {
 			//fmt.Println(target.Ip, target.Port, "更新")
 			nowTime := time.Now().Format("20060102150405")
@@ -116,7 +123,7 @@ func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
 			models.EditIplist(id, dataUpdate)
 			wg.Done()
 		} else {
-			if target.State.State == "open" {
+			if target.State == "open" {
 				models.AddIplist(data)
 				wg.Done()
 			//fmt.Println(target.Ip, target.Port, "插入")

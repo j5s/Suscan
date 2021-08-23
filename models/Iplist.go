@@ -12,6 +12,11 @@ type Iplist struct {
 	State       string `json:"state"`
 	Protocol    string `json:"protocol"`
 	Service     string `json:"service"`
+	Res_code    string `json:"res_code"`
+	Res_result  string `json:"res_result"`
+	Res_type    string `json:"res_type"`
+	Res_url     string `json:"res_url"`
+	Res_title   string `json:"res_title"`
 	CreatedTime string `json:"created_time"`
 	UpdatedTime string `json:"updated_time"`
 }
@@ -41,6 +46,11 @@ func AddIplist(data map[string]interface{}) {
 		State:       data["state"].(string),
 		Protocol:    data["protocol"].(string),
 		Service:     data["service"].(string),
+		Res_code:    data["res_code"].(string),
+		Res_result:  data["res_result"].(string),
+		Res_type:    data["res_type"].(string),
+		Res_url:     data["res_url"].(string),
+		Res_title:   data["res_title"].(string),
 		CreatedTime: nowTime,
 		UpdatedTime: nowTime,
 	}

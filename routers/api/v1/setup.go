@@ -29,5 +29,4 @@ func ScanSetup(c *gin.Context) {
 		"msg":  e.GetMsg(code),
 		"data": make(map[string]string),
 	})
-
 }

@@ -17,7 +17,7 @@ import (
 func init() {
 	err := setupSetting()
 	if err != nil {
-		log.Fatalf("配置文件读取失败: %v", err)
+		log.Fatalf("configs read fail: %v", err)
 	}
 }
 
