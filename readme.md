@@ -33,10 +33,12 @@ docker-compose up -d
 
 ## 😏 Api
 添加扫描资产：
+
 curl --location --request POST 'http://ip:18000/api/v1/assets' \
 --form 'assets="txf.com"'
 
 修改扫描配置：
+
 curl --location --request POST 'http://ip:18000/api/v1/scansetting' \
 --form 'thread="5000"' \
 --form 'port="1-65535"' \
@@ -44,10 +46,13 @@ curl --location --request POST 'http://ip:18000/api/v1/scansetting' \
 --form 'timetemplate="4"'
 
 开启扫描：
+
 curl --location --request GET 'http://ip:18000/api/v1/scan'
 
 获取扫描结果中的高危端口：
+
 curl --location --request GET 'http://ip:18000/api/v1/getVulPort'
 
 获取扫描结果中的高危协议：
+
 curl --location --request GET 'http://ip:18000/api/v1/getVulPro'
