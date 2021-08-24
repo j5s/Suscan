@@ -89,7 +89,7 @@ func NmapScan(ip,port string,t int,ch chan int)  {
 		wg.Add(1)
 		taskChan <- task
 	}
-	// 生产完成后，从生产方关闭task
+
 	close(taskChan)
 	wg.Wait()
 	<- ch
@@ -108,9 +108,9 @@ func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
 		data["url"] = target.Url
 		data["ip"] = target.Ip
 		data["port"] = target.Port
-		data["state"] = fmt.Sprintf("%s",target.State)
+		data["state"] = target.State
 		data["protocol"] = target.Protocol
-		data["service"] = fmt.Sprintf("%s",target.Service)
+		data["service"] = target.Service
 		data["res_code"] = target.Res_code
 		data["res_result"] = target.Res_result
 		data["res_type"] = target.Res_type
@@ -120,7 +120,6 @@ func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
 		//扫描结果入库前对比
 		ok, id := models.ExistIplist(target.Ip, target.Port)
 		if ok {
-			//fmt.Println(target.Ip, target.Port, "更新")
 			nowTime := time.Now().Format("20060102150405")
 			dataUpdate["updated_time"] = nowTime
 			models.EditIplist(id, dataUpdate)
@@ -129,7 +128,6 @@ func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
 			if target.State == "open" {
 				models.AddIplist(data)
 				wg.Done()
-			fmt.Println(target.Ip, target.Port, "插入")
 			}else {
 				wg.Done()
 			}

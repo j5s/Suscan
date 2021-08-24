@@ -41,7 +41,7 @@ CREATE TABLE `iplist`
     `created_time` varchar(255) DEFAULT NULL,
     `updated_time` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of iplist
@@ -72,18 +72,19 @@ CREATE TABLE `setting`
 (
     `id`           int NOT NULL AUTO_INCREMENT,
     `thread`       varchar(255) DEFAULT NULL,
-    `port`         varchar(255) DEFAULT NULL,
+    `port`         text CHARACTER SET utf8 COLLATE utf8_general_ci,
     `cmd`          varchar(255) DEFAULT NULL,
     `timetemplate` int          DEFAULT NULL,
     `created_time` varchar(255) DEFAULT NULL,
     `updated_time` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of setting
 -- ----------------------------
 
 INSERT INTO `setting`
-VALUES (1, '2000', '80,443', '3', 4, '20210819163924', '20210819164714');
+VALUES (1, '1000', '80,443', '5', 4, '20210823204652', '20210824110407');
+COMMIT;
 

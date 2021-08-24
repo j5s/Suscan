@@ -86,7 +86,6 @@ func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes) {
 		}
 		for _, port := range host.Ports {
 			//格式化nmap扫描返回的字段为string
-
 			hostname := fmt.Sprintf("%s", host.Hostnames)
 			context := strings.Fields(hostname)
 			hostname = context[0]
@@ -96,24 +95,27 @@ func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes) {
 			portchange := strconv.Itoa(int(port.ID))
 			service := fmt.Sprintf("%s", port.Service)
 			state := fmt.Sprintf("%s", port.State)
-			if hostname != "" {
-				url := utils.ParseUrl(hostname, portchange)
-				fmt.Println("识别的url地址为： " + url)
-				for _, results := range utils.Identify(url, 5) {
-					//fmt.Println("识别的results为： ")
-					//fmt.Println(results)
-					nmapsResTmp := NmapScanRes{hostname, ip, portchange, port.Protocol, service, state, results.RespCode, results.Result, results.Type, results.Url, results.Title}
-					nmapRes = append(nmapRes, nmapsResTmp)
+			if state == "open" {
+				if hostname != "" {
+					url := utils.ParseUrl(hostname, portchange)
+					for _, results := range utils.Identify(url, 5) {
+						//fmt.Println("识别url的results为： ")
+						//fmt.Println(results)
+						nmapsResTmp := NmapScanRes{hostname, ip, portchange, port.Protocol, service, state, results.RespCode, results.Result, results.Type, results.Url, results.Title}
+						nmapRes = append(nmapRes, nmapsResTmp)
+					}
+				} else {
+					url := utils.ParseUrl(ip, portchange)
+					for _, results := range utils.Identify(url, 5) {
+						//fmt.Println("识别ip的results为： ")
+						//fmt.Println(results)
+						nmapsResTmp := NmapScanRes{hostname, ip, portchange, port.Protocol, service, state, results.RespCode, results.Result, results.Type, results.Url, results.Title}
+						nmapRes = append(nmapRes, nmapsResTmp)
+					}
 				}
-			} else {
-				url := utils.ParseUrl(ip, portchange)
-				for _, results := range utils.Identify(url, 5) {
-					nmapsResTmp := NmapScanRes{hostname, ip, portchange, port.Protocol, service, state, results.RespCode, results.Result, results.Type, results.Url, results.Title}
-					nmapRes = append(nmapRes, nmapsResTmp)
-				}
+				return
 			}
 		}
-		fmt.Println("nmap扫描结果", nmapRes)
 	}
-	return
+	return 
 }

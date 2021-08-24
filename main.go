@@ -51,18 +51,14 @@ func setupSetting() error {
 }
 
 func main() {
-	//实现 Golang HTTP/HTTPS 服务重新启动的零停机
 	endless.DefaultReadTimeOut = global.ServerSetting.ReadTimeout
 	endless.DefaultWriteTimeOut = global.ServerSetting.WriteTimeout
 	endless.DefaultMaxHeaderBytes = 1 << 20
 	endPoint := fmt.Sprintf(":%d", global.ServerSetting.HttpPort)
-	//返回一个初始化的 endlessServer 对象
 	server := endless.NewServer(endPoint, routers.InitRouter())
-	//在 BeforeBegin 时输出当前进程的 pid
 	server.BeforeBegin = func(add string) {
 		log.Printf("Actual pid is %d", syscall.Getpid())
 	}
-	//调用 ListenAndServe 将实际“启动”服务
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Printf("Server err: %v", err)
