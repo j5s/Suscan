@@ -16,8 +16,6 @@ type AppSettingS struct {
 	MaxPageSize           int
 	DefaultContextTimeout time.Duration
 	JwtSecret string
-	PortUserDict          string
-	PortPassDict          string
 }
 
 type DatabaseSettingS struct {
@@ -33,12 +31,12 @@ type DatabaseSettingS struct {
 	MaxOpenConns int
 }
 
-type MasscanSettingS struct {
-	Rate      string
-	IpFile    string
-	IpNotScan string
-	Port      string
-}
+//type MasscanSettingS struct {
+//	Rate      string
+//	IpFile    string
+//	IpNotScan string
+//	Port      string
+//}
 
 var sections = make(map[string]interface{})
 

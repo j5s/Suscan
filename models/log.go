@@ -11,7 +11,6 @@ type Log struct {
 	CreatedTime string `json:"created_time"`
 }
 
-
 func AddLog(data map[string]interface{})int {
 	log := Log{
 		TaskName:    data["task_name"].(string),

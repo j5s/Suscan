@@ -15,9 +15,10 @@ import (
 var ips []string
 
 // 端口扫描api
+
 func ScanPort(c *gin.Context) {
 	code := e.SUCCESS
-	go InitNmapscan()
+	go InitNmapScan()
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  e.GetMsg(code),
@@ -26,7 +27,8 @@ func ScanPort(c *gin.Context) {
 }
 
 //实现端口扫描
-func InitNmapscan() {
+
+func InitNmapScan() {
 	start := time.Now()
 	//数据库读取要扫描的资产
 	result := models.GetAllAsset()
@@ -36,10 +38,8 @@ func InitNmapscan() {
 	}
 	//数据库读取要扫描的端口
 	port := models.GetSettingPort("port")
-	//数据库读取nmap -T 的值
-	t := models.GetSettingTiming("timetemplate")
-	t1, _ := strconv.Atoi(t)
-	NmapStart(ips,port,t1)
+
+	NmapStart(ips,port)
 	costTime := time.Since(start)
 	data := make(map[string]interface{})
 	data["task_name"] = "PortScan"
@@ -55,44 +55,58 @@ type NmapScanRes struct {
 	Protocol string
 }
 
-func NmapStart(ips []string, port string,t int)  {
-	//数据库获取nmap个数的配置
+func NmapStart(ips []string, port string)  {
+	//配置nmap个数
 	cmd := models.GetSettingCmd("cmd")
 	//转为int
 	cmdInt, _ := strconv.Atoi(cmd)
 
 	//开启多个nmap协程
 	ch := make(chan int,cmdInt)
+
 	for _, ip := range ips {
 		ch <- 1
-		go NmapScan(ip,port,t,ch)
+		go NmapScan(ip,port,ch)
 	}
 }
 
-func NmapScan(ip,port string,t int,ch chan int)  {
-
-	nmapRes := nmap.NmapScan(ip,port,t)
-	//fmt.Println(nmapRes)
-	// 并发处理扫描结果
-	wg := &sync.WaitGroup{}
-
-	// 创建一个buffer为thread * 2的channel
-	thread := 2
-	taskChan := make(chan nmap.NmapScanRes, 50*2)
-
-	// 创建Thread个协程
-	for i := 0; i < thread; i++ {
-		go ScanResult(taskChan, wg)
+func NmapScan(ip,port string,ch chan int)  {
+	noping := models.GetSettingNoPing("noping")
+	if noping == "0" {
+		nmapRes := nmap.NmapScan(ip,port)
+		wg := &sync.WaitGroup{}
+		// 创建一个buffer为thread * 2的channel
+		thread := 2
+		taskChan := make(chan nmap.NmapScanRes, 50*2)
+		// 创建Thread个协程
+		for i := 0; i < thread; i++ {
+			go ScanResult(taskChan, wg)
+		}
+		for _, task := range nmapRes {
+			wg.Add(1)
+			taskChan <- task
+		}
+		close(taskChan)
+		wg.Wait()
+		<- ch
+	}else {
+		nmapRes := nmap.NmapScanPn(ip,port)
+		wg := &sync.WaitGroup{}
+		// 创建一个buffer为thread * 2的channel
+		thread := 2
+		taskChan := make(chan nmap.NmapScanRes, 50*2)
+		// 创建Thread个协程
+		for i := 0; i < thread; i++ {
+			go ScanResult(taskChan, wg)
+		}
+		for _, task := range nmapRes {
+			wg.Add(1)
+			taskChan <- task
+		}
+		close(taskChan)
+		wg.Wait()
+		<- ch
 	}
-
-	for _, task := range nmapRes {
-		wg.Add(1)
-		taskChan <- task
-	}
-
-	close(taskChan)
-	wg.Wait()
-	<- ch
 }
 
 func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
@@ -111,11 +125,11 @@ func ScanResult(taskChan chan nmap.NmapScanRes, wg *sync.WaitGroup) {
 		data["state"] = target.State
 		data["protocol"] = target.Protocol
 		data["service"] = target.Service
-		data["res_code"] = target.Res_code
-		data["res_result"] = target.Res_result
-		data["res_type"] = target.Res_type
-		data["res_url"] = target.Res_url
-		data["res_title"] = target.Res_title
+		data["res_code"] = target.ResCode
+		data["res_result"] = target.ResResult
+		data["res_type"] = target.ResType
+		data["res_url"] = target.ResUrl
+		data["res_title"] = target.ResTitle
 
 		//扫描结果入库前对比
 		ok, id := models.ExistIplist(target.Ip, target.Port)

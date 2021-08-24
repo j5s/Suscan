@@ -9,6 +9,7 @@ import (
 )
 
 //获取高危端口IP的相关信息
+
 func Getvulport(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["ip"] = models.GetPortResult()
@@ -23,6 +24,7 @@ func Getvulport(c *gin.Context) {
 }
 
 //获取高危协议IP的相关信息
+
 func Getvulpro(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["pro"] = models.GetProResult()

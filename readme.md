@@ -19,7 +19,7 @@ systemctl restart docker
 
 systemctl enable docker  
 
-wget [https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64](https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64)
+wget https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
 
 sudo cp docker-compose-Linux-x86_64 /usr/bin/docker-compose
 

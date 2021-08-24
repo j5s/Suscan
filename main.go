@@ -38,10 +38,10 @@ func setupSetting() error {
 	if err != nil {
 		return err
 	}
-	err = s.ReadSection("Masscan", &global.MasscanSetting)
-	if err != nil {
-		return err
-	}
+	//err = s.ReadSection("Masscan", &global.MasscanSetting)
+	//if err != nil {
+	//	return err
+	//}
 	global.AppSetting.DefaultContextTimeout *= time.Second
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second

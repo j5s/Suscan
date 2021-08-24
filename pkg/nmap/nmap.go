@@ -10,17 +10,17 @@ import (
 )
 
 type NmapScanRes struct {
-	Url        string
-	Ip         string
-	Port       string
-	Protocol   string
-	Service    string
-	State      string
-	Res_code   string
-	Res_result string
-	Res_type   string
-	Res_url    string
-	Res_title  string
+	Url       string
+	Ip        string
+	Port      string
+	Protocol  string
+	Service   string
+	State     string
+	ResCode   string
+	ResResult string
+	ResType   string
+	ResUrl    string
+	ResTitle  string
 }
 
 type IdentifyResult struct {
@@ -32,7 +32,7 @@ type IdentifyResult struct {
 	Title    string
 }
 
-func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes) {
+func NmapScan(ip, port string) (nmapRes []NmapScanRes) {
 
 	var (
 		resultBytes []byte
@@ -42,8 +42,6 @@ func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes) {
 	s, err := nmap.NewScanner(
 		nmap.WithTargets(ip),
 		nmap.WithPorts(port),
-		nmap.WithSkipHostDiscovery(), //  -Pn
-		nmap.WithTimingTemplate(nmap.Timing(t)),
 	)
 	if err != nil {
 		log.Fatalf("unable to create nmap scanner: %v", err)
@@ -76,8 +74,10 @@ func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes) {
 	result, err := nmap.Parse(resultBytes)
 
 	result.NmapErrors = strings.Split(string(errorBytes), "\n")
+
 	if err != nil {
-		panic(err)
+		//panic(err)
+		return
 	}
 
 	for _, host := range result.Hosts {

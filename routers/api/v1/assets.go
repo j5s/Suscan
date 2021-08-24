@@ -3,18 +3,16 @@ package v1
 import (
 	"Suscan/models"
 	"Suscan/pkg/e"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
 	"time"
 )
 
-
 func AssetsSetup(c *gin.Context) {
 	assets := c.PostForm("assets")
 	code := e.SUCCESS
-	fmt.Println(assets)
+	//fmt.Println(assets)
 	assetResult := strings.Split(assets,"\n")
 
 	for _,as := range assetResult{
@@ -40,19 +38,19 @@ func AssetsSetup(c *gin.Context) {
 
 }
 
-func GetAssets(c *gin.Context) {
-	code := e.SUCCESS
-	result := models.GetAllAsset()
-
-	for _,r := range result{
-		fmt.Println(r.Target)
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": make(map[string]string),
-	})
-
-}
+//func GetAssets(c *gin.Context) {
+//	code := e.SUCCESS
+//	result := models.GetAllAsset()
+//
+//	for _,r := range result{
+//		fmt.Println(r.Target)
+//	}
+//
+//	c.JSON(http.StatusOK, gin.H{
+//		"code": code,
+//		"msg":  e.GetMsg(code),
+//		"data": make(map[string]string),
+//	})
+//
+//}
 
