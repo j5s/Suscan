@@ -10,29 +10,29 @@ import (
 )
 
 type NmapScanRes struct {
-	Url      string
-	Ip       string
-	Port     string
-	Protocol string
-	Service  string
-	State    string
-	Res_code string
+	Url        string
+	Ip         string
+	Port       string
+	Protocol   string
+	Service    string
+	State      string
+	Res_code   string
 	Res_result string
-	Res_type string
-	Res_url string
-	Res_title string
+	Res_type   string
+	Res_url    string
+	Res_title  string
 }
 
 type IdentifyResult struct {
-	Type string
+	Type     string
 	RespCode string
-	Result string
+	Result   string
 	ResultNc string
-	Url string
-	Title string
+	Url      string
+	Title    string
 }
 
-func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes ) {
+func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes) {
 
 	var (
 		resultBytes []byte
@@ -86,28 +86,34 @@ func NmapScan(ip, port string, t int) (nmapRes []NmapScanRes ) {
 		}
 		for _, port := range host.Ports {
 			//格式化nmap扫描返回的字段为string
+
 			hostname := fmt.Sprintf("%s", host.Hostnames)
-			hostname=strings.Trim(hostname,"[")
-			hostname=strings.Trim(hostname,"]")
+			context := strings.Fields(hostname)
+			hostname = context[0]
+			hostname = strings.Trim(hostname, "[")
+			hostname = strings.Trim(hostname, "]")
 			ip := fmt.Sprintf("%s", host.Addresses[0])
 			portchange := strconv.Itoa(int(port.ID))
-			service :=  fmt.Sprintf("%s",port.Service)
-			state := fmt.Sprintf("%s",port.State)
-			if hostname != ""{
-				url := utils.ParseUrl(hostname,portchange)
+			service := fmt.Sprintf("%s", port.Service)
+			state := fmt.Sprintf("%s", port.State)
+			if hostname != "" {
+				url := utils.ParseUrl(hostname, portchange)
+				fmt.Println("识别的url地址为： " + url)
 				for _, results := range utils.Identify(url, 5) {
-					nmapsResTmp := NmapScanRes{hostname, ip, portchange, port.Protocol, service, state,results.RespCode,results.Result,results.Type,results.Url,results.Title}
+					//fmt.Println("识别的results为： ")
+					//fmt.Println(results)
+					nmapsResTmp := NmapScanRes{hostname, ip, portchange, port.Protocol, service, state, results.RespCode, results.Result, results.Type, results.Url, results.Title}
 					nmapRes = append(nmapRes, nmapsResTmp)
 				}
-			}else {
-				url := utils.ParseUrl(ip,portchange)
-				for _, results := range utils.Identify(url, 60) {
-					nmapsResTmp := NmapScanRes{hostname, ip, portchange, port.Protocol, service, state,results.RespCode,results.Result,results.Type,results.Url,results.Title}
+			} else {
+				url := utils.ParseUrl(ip, portchange)
+				for _, results := range utils.Identify(url, 5) {
+					nmapsResTmp := NmapScanRes{hostname, ip, portchange, port.Protocol, service, state, results.RespCode, results.Result, results.Type, results.Url, results.Title}
 					nmapRes = append(nmapRes, nmapsResTmp)
 				}
 			}
 		}
-		//fmt.Println("nmap扫描结果",nmapRes)
+		fmt.Println("nmap扫描结果", nmapRes)
 	}
 	return
 }

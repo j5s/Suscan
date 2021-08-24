@@ -41,6 +41,8 @@ func Identify(url string, timeout int) []IdentifyResult {
 		DefaultRespTitle = resp.RespTitle
 		DefaultTarget = resp.Url
 		DefaultFavicon = resp.FaviconMd5
+		//fmt.Println("返回web包: ")
+		//fmt.Println(resp)
 	}
 	// start identify
 	var identify_data []string

@@ -22,6 +22,7 @@ type RuleLab struct {
 }
 
 var RuleData = []RuleLab{
+	{"Tuya Application", "header", "", InStr{"", "(server-type: 8ef0619f-f2d6-45df-831e-b77f7e6e5bef)", ""}, ReqHttp{"", "", nil, ""}},
 	{"21publish Blog", "ico", "", InStr{"", "", "(e08333841cbe40d15b18f49045f26614)"}, ReqHttp{"", "", nil, ""}},
 	{"3-byte invalid favicon", "ico", "", InStr{"", "", "(ecaa88f7fa0bf610a5a26cf545dcd3aa)"}, ReqHttp{"", "", nil, ""}},
 	{"About.com", "ico", "", InStr{"", "", "(71FA36961A58E12A525E7E0EA1F4A30D)"}, ReqHttp{"", "", nil, ""}},
